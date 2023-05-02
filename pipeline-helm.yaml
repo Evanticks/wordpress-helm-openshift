@@ -10,12 +10,12 @@ spec:
     - name: compartido
       optional: false
   tasks:
-    - name: helm-upgrade-from-source
+    - name: task-install-chart
       runAfter:
         - git-clone
       taskRef:
         kind: Task
-        name: helm-upgrade-from-source
+        name: task-install-chart
       params:
         - name: charts_dir
           value: bitnami/wordpress
