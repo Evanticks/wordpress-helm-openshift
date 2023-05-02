@@ -1,0 +1,167 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"tekton.dev/v1beta1","kind":"Task","metadata":{"annotations":{"tekton.dev/categories":"Deployment","tekton.dev/pipelines.minVersion":"0.12.1","tekton.dev/platforms":"linux/amd64,linux/s390x,linux/ppc64le,linux/arm64","tekton.dev/tags":"helm"},"labels":{"app.kubernetes.io/version":"0.3"},"name":"helm-upgrade-from-source","namespace":"pipeline-helm"},"spec":{"description":"These
+      tasks will install / upgrade a helm chart into your Kubernetes / OpenShift
+      Cluster using Helm","params":[{"description":"The directory in source that
+      contains the helm
+      chart","name":"charts_dir"},{"default":"v1.0.0","description":"The helm
+      release version in semantic versioning
+      format","name":"release_version"},{"default":"helm-release","description":"The
+      helm release name","name":"release_name"},{"default":"","description":"The
+      helm release
+      namespace","name":"release_namespace"},{"default":"","description":"Specify
+      the values you want to overwrite, comma separated:
+      autoscaling.enabled=true,replicas=1","name":"overwrite_values"},{"default":"values.yaml","description":"The
+      values file to be
+      used","name":"values_file"},{"default":"docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae","description":"helm
+      image to be used","name":"helm_image"},{"default":"","description":"Extra
+      parameters passed for the helm upgrade
+      command","name":"upgrade_extra_params"}],"steps":[{"image":"$(params.helm_image)","name":"upgrade","script":"echo
+      current installed helm releases\nhelm list --namespace
+      \"$(params.release_namespace)\"\n\necho installing helm chart...\nhelm
+      upgrade --install --wait --values
+      \"$(params.charts_dir)/$(params.values_file)\" --namespace
+      \"$(params.release_namespace)\" --version \"$(params.release_version)\"
+      \"$(params.release_name)\" \"$(params.charts_dir)\" --debug --set
+      \"$(params.overwrite_values)\"
+      $(params.upgrade_extra_params)\n","workingDir":"/workspace/source"}],"workspaces":[{"name":"source"}]}}
+    tekton.dev/categories: Deployment
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/platforms: 'linux/amd64,linux/s390x,linux/ppc64le,linux/arm64'
+    tekton.dev/tags: helm
+  resourceVersion: '658283'
+  name: helm-upgrade-from-source
+  uid: 06fc5b0b-1ea5-4f7b-9327-047a82b2f1d8
+  creationTimestamp: '2023-04-24T08:23:13Z'
+  generation: 32
+  managedFields:
+    - apiVersion: tekton.dev/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:kubectl.kubernetes.io/last-applied-configuration': {}
+            'f:tekton.dev/categories': {}
+            'f:tekton.dev/pipelines.minVersion': {}
+            'f:tekton.dev/platforms': {}
+            'f:tekton.dev/tags': {}
+          'f:labels':
+            .: {}
+            'f:app.kubernetes.io/version': {}
+        'f:spec':
+          .: {}
+          'f:description': {}
+          'f:params': {}
+          'f:workspaces': {}
+      manager: kubectl-client-side-apply
+      operation: Update
+      time: '2023-04-24T08:23:13Z'
+    - apiVersion: tekton.dev/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          'f:steps': {}
+      manager: Mozilla
+      operation: Update
+      time: '2023-04-25T11:56:19Z'
+  namespace: pipeline-helm
+  labels:
+    app.kubernetes.io/version: '0.3'
+spec:
+  description: >-
+    These tasks will install / upgrade a helm chart into your Kubernetes /
+    OpenShift Cluster using Helm
+  params:
+    - description: The directory in source that contains the helm chart
+      name: charts_dir
+      type: string
+    - default: v1.0.0
+      description: The helm release version in semantic versioning format
+      name: release_version
+      type: string
+    - default: helm-release
+      description: The helm release name
+      name: release_name
+      type: string
+    - default: ''
+      description: The helm release namespace
+      name: release_namespace
+      type: string
+    - default: ''
+      description: >-
+        Specify the values you want to overwrite, comma separated:
+        autoscaling.enabled=true,replicas=1
+      name: overwrite_values
+      type: string
+    - default: values.yaml
+      description: The values file to be used
+      name: values_file
+      type: string
+    - default: >-
+        docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae
+      description: helm image to be used
+      name: helm_image
+      type: string
+    - default: ''
+      description: Extra parameters passed for the helm upgrade command
+      name: upgrade_extra_params
+      type: string
+  steps:
+    - image: $(params.helm_image)
+      name: upgrade
+      resources: {}
+      script: >
+        echo current installed helm releases  helm list --namespace
+        "$(params.release_namespace)" 
+
+        ls 
+
+        pwd
+
+        echo installing helm chart...
+
+        helm uninstall wordpress
+
+        helm dependency update bitnami/wordpress
+
+
+
+
+        helm install wordpress bitnami/wordpress
+
+        echo "WordPress URL: http://$SERVICE_IP/"
+      workingDir: /workspace/source
+  workspaces:
+    - name: source
+
+
+
+
+---------
+
+Probando contraseña
+
+echo Password: $(kubectl get secret --namespace pipeline-helm wordpress-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 --decode)
+
+
+
+oc get pv
+
+helm install RELEASE-NAME stable/wordpress --set mariadb.enabled=false,persistence.existingClaim=EXISTING-CLAIM,wordpressPassword=YOUR-PASSWORD
+
+
+
+helm list --namespace "$(params.release_namespace)"
+
+
+helm upgrade --install wordpress bitnami/wordpress --version 11.5.0 -f values.yaml  --set auth.password=RmdHU3AwM2VpNw== -n pipeline-helm --dry-run
+
+
+oc create rolebinding default-edit \
+  --clusterrole=cluster-admin \
+  --serviceaccount=pipeline-helm:pipeline \
+  --namespace=pipeline-helm

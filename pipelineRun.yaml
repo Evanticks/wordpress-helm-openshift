@@ -1,0 +1,49 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: demo-pipeline-run-1
+spec:
+  params:
+    - name: charts_dir
+      value: bitnami/wordpress
+    - name: release_version
+      value: v1.0.0
+    - name: release_name
+      value: helm-release
+    - name: release_namespace
+      value: ''
+    - name: overwrite_values
+      value: ''
+    - name: values_file
+      value: values.yaml
+    - name: helm_image
+      value: >-
+        docker.io/lachlanevenson/k8s-helm@sha256:5c792f29950b388de24e7448d378881f68b3df73a7b30769a6aa861061fd08ae
+    - name: upgrade_extra_params
+      value: ''
+    - name: url
+      value: 'https://github.com/Evanticks/charts-bitnami.git'
+    - name: submodules
+      value: 'true'
+    - name: depth
+      value: '1'
+    - name: sslVerify
+      value: 'true'
+    - name: crtFileName
+      value: ca-bundle.crt
+    - name: deleteExisting
+      value: 'true'
+    - name: verbose
+      value: 'true'
+    - name: gitInitImage
+      value: >-
+        gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.40.2
+    - name: userHome
+      value: /home/git
+  pipelineRef:
+    name: "pipeline-helm"
+  serviceAccountName: pipeline
+  workspaces:
+    - name: compartido
+      persistentVolumeClaim:
+        claimName: pipelinerun-vol
