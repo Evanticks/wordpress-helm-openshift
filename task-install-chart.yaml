@@ -88,26 +88,11 @@ spec:
         helm dependency update bitnami/wordpress
 
         helm list --namespace "$(params.release_namespace)"
-        #!/bin/bash
+                echo current installed helm releases
+        helm list --namespace "$(params.release_namespace)"
 
-        helm list -q | grep -w "wordpress"
-
-
-        # Verificar si el chart de Bitnami/WordPress está instalado
-        if [[ echo $? -eq 0 ]]; then
-          echo "El chart de Bitnami/WordPress está instalado."
-
-          # Desinstalar el chart de Bitnami/WordPress
-          helm uninstall wordpress
-
-          echo "El chart de Bitnami/WordPress ha sido eliminado."
-        fi
-
-        # Instalar el chart de Bitnami/WordPress
-
-        helm install wordpress bitnami/wordpress
-        
-        echo "El chart de Bitnami/WordPress ha sido instalado."
+        echo installing helm chart...
+        helm upgrade --install --wait --values "$(params.charts_dir)/$(params.values_file)" --namespace "$(params.release_namespace)" --version "$(params.release_version)" "$(params.release_name)" "$(params.charts_dir)" --debug --set "$(params.overwrite_values)" $(params.upgrade_extra_params)
 
 
 
