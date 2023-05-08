@@ -91,10 +91,22 @@ spec:
                 echo current installed helm releases
         helm list --namespace "$(params.release_namespace)"
 
-        echo installing helm chart...
-        helm upgrade --install --wait --values "$(params.charts_dir)/$(params.values_file)" --namespace "$(params.release_namespace)" --version "$(params.release_version)" "$(params.release_name)" "$(params.charts_dir)" --debug --set "$(params.overwrite_values)" $(params.upgrade_extra_params)
+        if helm ls | grep "helm-release"  
 
+        then
 
+            echo "WordPress de Bitnami está instalado. Desinstalando..."
+
+            helm uninstall helm-release
+
+            echo "WordPress de Bitnami ha sido desinstalado exitosamente."
+        fi
+
+        helm upgrade --install --values
+        "$(params.charts_dir)/$(params.values_file)" --namespace
+        "$(params.release_namespace)" --version "$(params.release_version)"
+        "$(params.release_name)" "$(params.charts_dir)" --debug --set
+        "$(params.overwrite_values)" $(params.upgrade_extra_params)
 
       workingDir: /workspace/source
   workspaces:
