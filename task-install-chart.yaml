@@ -95,7 +95,6 @@ spec:
         if helm ls | grep "helm-release"  
 
         then
-
             echo "WordPress de Bitnami está instalado. Desinstalando..."
 
             helm uninstall helm-release
